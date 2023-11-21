@@ -40,8 +40,12 @@ class Personnage:
     def is_alive(self):
         return self._pv_courant > 0
 
+    
     def __str__(self):
-        return f"Nom: {self._nom}, PV: {self._pv_courant}/{self._pv_max}, Attaque: {self._attaque}, Défense: {self._defense}, Vitesse: {self._vitesse}"
+        return f"""👹 {self._nom} rentre dans la faille de l'invocateur 👺:
+    💣 attack: {self._attaque} 
+    ⛪ defense: {self._defense}"""
+
 
 if __name__ == "__main__":
     personnage1 = Personnage("Sylvan", 110, 8, 4, 9, "Foudre", "Ombre")
@@ -49,9 +53,10 @@ if __name__ == "__main__":
     personnage3 = Personnage("Zephyr", 90, 6, 5, 8, "Tourbillon", "Souffle")
     personnage4 = Personnage("Thorn", 140, 9, 3, 6, "Épine", "Carapace")
     personnage5 = Personnage("Aqua", 130, 7, 6, 5, "Vague", "Cascade")
-
+    print(personnage1)
+    print(personnage2)   
     while (personnage1.is_alive() and personnage2.is_alive()):
-
+        
         personnage1.attack(personnage2)
         personnage2.show_healthbar()
         personnage2.attack(personnage1)
