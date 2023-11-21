@@ -21,5 +21,6 @@ class Client:
             if message == "stop":
                 break
 
-client = Client()
-client.join_server()
+if __name__ == "__main__":
+    client = Client()
+    client.join_server()
