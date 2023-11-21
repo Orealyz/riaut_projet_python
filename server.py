@@ -41,6 +41,7 @@ class Server:
         self._conn.sendall(question.encode())
         data = self._conn.recv(1024)
         return data.decode()
-    
-server = Server()
-server.start_server()
+
+if __name__ == "__main__":
+    server = Server()
+    server.start_server()
