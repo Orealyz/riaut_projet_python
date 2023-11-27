@@ -12,11 +12,15 @@ class Client:
     
         while True:
             data = s.recv(1024)
+            message = ""
 
             if data:
-                message = input(data.decode())
-
-            s.sendall(message.encode())
+                data = data.decode()
+                if (data[0] == "Q"):
+                    message = input(data)
+                    s.sendall(message.encode())
+                else:
+                    print(data)
             
             if message == "stop":
                 break
