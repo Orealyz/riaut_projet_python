@@ -1,6 +1,7 @@
 from server import Server
 from player import Player
 from character import Personnage
+import time
 
 class Game:
     def __init__(self, server) -> None:
@@ -20,65 +21,56 @@ class Game:
         return self._player_1, self._player_2
     
     def perso(self):
-        list_perso = [Personnage("Sylvan", 110, 8, 4, 9, "Foudre", "Ombre"), Personnage("Ignis", 120, 10, 2, 7, "Brûlure", "Flamme"), 
-                       Personnage("Zephyr", 90, 6, 5, 8, "Tourbillon", "Souffle"), Personnage("Thorn", 140, 9, 3, 6, "Épine", "Carapace"),
-                       Personnage("Aqua", 130, 7, 6, 5, "Vague", "Cascade")]
-        self._server.send_msg("Voici la liste des personnages : \n" + list_perso[0].__str__() + "\n" + list_perso[1].__str__() + "\n" + list_perso[2].__str__() 
-                              + "\n" + list_perso[3].__str__() + "\n" + list_perso[4].__str__() + "\n","Voici la liste des personnages : \n" + list_perso[0].__str__() + "\n" + list_perso[1].__str__() + "\n" + list_perso[2].__str__() 
-                              + "\n" + list_perso[3].__str__() + "\n" + list_perso[4].__str__() + "\n")
-        perso_1 = None
-        while perso_1 == None:
-            perso_1 = self._server.send_question_client("Q| Choisis ton 1er personnage : ", "M| Joueur 1 choisis son 1er personnage")
-            if perso_1 == "Sylvan":
-                perso_1 = list_perso[0]
-            elif perso_1 == "Ignis":
-                perso_1 = list_perso[1]
-            elif perso_1 == "Zephyr":
-                perso_1 = list_perso[2]
-            elif perso_1 == "Thorn":
-                perso_1 = list_perso[3]
-            elif perso_1 == "Aqua":
-                perso_1 = list_perso[4]
-            else:
-                perso_1 = None
-        
-        perso_2 = None
-        while perso_2 == None:
-            perso_2 = self._server.send_question_client("Q| Choisis ton 2eme personnage : ", "M| Joueur 1 choisis son 2eme personnage")
-            if perso_2 == "Sylvan":
-                perso_2 = list_perso[0]
-            elif perso_2 == "Ignis":
-                perso_2 = list_perso[1]
-            elif perso_2 == "Zephyr":
-                perso_2 = list_perso[2]
-            elif perso_2 == "Thorn":
-                perso_2 = list_perso[3]
-            elif perso_2 == "Aqua":
-                perso_2 = list_perso[4]
-            else:
-                perso_2 = None
+        list_perso = [
+            Personnage("Sylvan", 110, 8, 4, 9, "Foudre", "Ombre"),
+            Personnage("Ignis", 120, 10, 2, 7, "Brûlure", "Flamme"),
+            Personnage("Zephyr", 90, 6, 5, 8, "Tourbillon", "Souffle"),
+            Personnage("Thorn", 140, 9, 3, 6, "Épine", "Carapace"),
+            Personnage("Aqua", 130, 7, 6, 5, "Vague", "Cascade")
+        ]
 
-        perso_3 = None
-        while perso_3 == None:
-            perso_3 = self._server.send_question_client("Q| Choisis ton 3eme personnage : ", "M| Joueur 1 choisis son 3eme personnage")
-            if perso_3 == "Sylvan":
-                perso_3 = list_perso[0]
-            elif perso_3 == "Ignis":
-                perso_3 = list_perso[1]
-            elif perso_3 == "Zephyr":
-                perso_3 = list_perso[2]
-            elif perso_3 == "Thorn":
-                perso_3 = list_perso[3]
-            elif perso_3 == "Aqua":
-                perso_3 = list_perso[4]
-            else:
-                perso_3 = None
+        message = "Voici la liste des personnages : \n"
+        self._server.send_msg(message, message)
+        for perso in list_perso:
+            message = perso.__str__() + "\n"
+            self._server.send_msg(message, message)
+            time.sleep(0.5)
+
+        
+        perso_1 = self.choisir_personnage(1, list_perso, "server")
+        perso_2 = self.choisir_personnage(2, list_perso, "server")
+        perso_3 = self.choisir_personnage(3, list_perso, "server")
 
         self._player_1.set_perso([perso_1, perso_2, perso_3])
 
-        # perso_1 = self._server.send_question_server("Q| Choisis ton 1er personnage : ", "M| Joueur 2 choisis son 1er personnage")
-        # perso_2 = self._server.send_question_server("Q| Choisis ton 2eme personnage : ", "M| Joueur 2 choisis son 2eme personnage")
-        # perso_3 = self._server.send_question_server("Q| Choisis ton 3eme personnage : ", "M| Joueur 2 choisis son 3eme personnage")
+        perso_1 = self.choisir_personnage(1, list_perso, "client")
+        perso_2 = self.choisir_personnage(2, list_perso, "client")
+        perso_3 = self.choisir_personnage(3, list_perso, "client")
+
+        self._player_2.set_perso([perso_1, perso_2, perso_3])
+
+        send_data = (f"M| {self._player_1.get_pseudo()} a choisi {self._player_1.get_perso()[0]._nom}, {self._player_1.get_perso()[1]._nom} et {self._player_1.get_perso()[2]._nom}")
+        self._server.send_msg(send_data, send_data)
+        send_data = (f"M| {self._player_2.get_pseudo()} a choisi {self._player_2.get_perso()[0]._nom}, {self._player_2.get_perso()[1]._nom} et {self._player_2.get_perso()[2]._nom}")
+        self._server.send_msg(send_data, send_data)
+
+    def choisir_personnage(self, joueur_numero, list_perso, client_server):
+        personnage = None
+        while personnage is None:
+            message_question = f"Q| Choisis ton {joueur_numero} personnage : "
+            message_confirmation = f"M| Joueur {joueur_numero} choisis son {joueur_numero} personnage"
+            
+            if client_server == "server":
+                personnage_nom = self._server.send_question_server(message_question, message_confirmation)
+            if client_server == "client":
+                personnage_nom = self._server.send_question_client(message_question, message_confirmation)
+            
+            if personnage_nom in ["Sylvan", "Ignis", "Zephyr", "Thorn", "Aqua"]:
+                noms_perso = ["Sylvan", "Ignis", "Zephyr", "Thorn", "Aqua"]
+                personnage = list_perso[noms_perso.index(personnage_nom)]
+            else:
+                personnage = None
+        return personnage
 
     def start(self):
         self._start = True
