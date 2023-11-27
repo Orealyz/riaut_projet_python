@@ -10,3 +10,6 @@ class Player:
     def get_perso(self):
         return self._perso
     
+    def set_perso(self, characters):
+        self._perso = characters
+    

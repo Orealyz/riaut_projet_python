@@ -20,28 +20,20 @@ class Server:
         except:
             print("Error")
             sys.exit(1)
-        
-        self.serve_forever()
+    
+        self._game.start()
 
-    def serve_forever(self):
-        data = self.send_question("On peut parler ?")
-        while True:
-            try:
-                if data.__contains__("stop"):
-                    self._conn.close()
-                    break
-                else:
-                    self._game.start()
-
-            except socket.error:
-                print("Error Occured.")
-        sys.exit(1)
-
-    def send_question(self, question):
+    def send_question_client(self, question, msg):
+        print(msg)
         self._conn.sendall(question.encode())
         data = self._conn.recv(1024)
         return data.decode()
+    
+    def send_question_server(self, question, msg):
+        self._conn.sendall(msg.encode())
+        return input(question)
+    
+    def send_msg(self, msg_client, msg_server):
+        self._conn.sendall(msg_client.encode())
+        print(msg_server)
 
-if __name__ == "__main__":
-    server = Server()
-    server.start_server()
