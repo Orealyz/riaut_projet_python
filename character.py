@@ -75,32 +75,76 @@ if __name__ == "__main__":
         Personnage("Zephyr", 30, 8, 5, 8, "Tourbillon", "Souffle")
     ]
     while equipe1 and equipe2 and equipe1[0].is_alive() and equipe2[0].is_alive():
-        # Tour de l'équipe 1 (premier personnage)
-        personnage1 = equipe1[0]
+       #tour de l'equipe 1 choisis qui va attaquer  
+        ton_perso = '0'
+        while ton_perso not in ['1','2', '3']:
+            ton_perso = input(f"\nEquipe 1 Choisis quel perso va attaquer 1 2 ou 3 :  ")
+            if ton_perso == '1':
+                Equipe1 = equipe1[0]
+            elif ton_perso == '2':
+                Equipe1 = equipe1[1]
+            elif ton_perso == '3':
+                Equipe1 = equipe1[2]
+            else:
+                print("Entrée invalide. Veuillez saisir 1 2 OU 3")
+
+
+        # Tour de l'équipe 1 choisis qui attaquer
+        personnage1 = Equipe1
         if personnage1.is_alive():
-            action = input(f"\nTour de {personnage1._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) : ")
-            while action not in ['0', '1']:
+            action = input(f"\nEquipe 2 Tour de {personnage1._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) : ")
+            while action not in ['1','2', '3']:
                 print(f"Entrée invalide. Veuillez saisir 0 pour passer ou 1 pour attaquer.")
-                action = input(f"\nTour de {personnage1._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) : ")
+                action = input(f"\nEquipe 2 Tour de {personnage1._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) : ")
 
             if action == '1':
                 target = equipe2[0]
+                personnage1.attack(target)
+                target.show_healthbar()
+            elif action == '2':
+                target = equipe2[1]
+                personnage1.attack(target)
+                target.show_healthbar()
+            elif action == '3':
+                target = equipe2[2]
                 personnage1.attack(target)
                 target.show_healthbar()
             elif action == '0':
                 print(f"{personnage1._nom} a passé son tour.")
                 equipe2[0].show_healthbar()
 
-        # Tour de l'équipe 2 (premier personnage)
-        personnage2 = equipe2[0]
+
+        #tour de l'equipe 2 choisis qui va attaquer 
+        ton_perso = '0'
+        while ton_perso not in ['1','2', '3']:
+            ton_perso = input(f"\nEquipe 2 Choisis quel perso va attaquer 1 2 ou 3 :  ")
+            if ton_perso == '1':
+                Equipe2 = equipe2[0]
+            elif ton_perso == '2':
+                Equipe2 = equipe2[1]
+            elif ton_perso == '3':
+                Equipe2 = equipe2[2]
+            else:
+                print("Entrée invalide. Veuillez saisir 1 2 OU 3")
+
+        # Tour de l'équipe 2 choisis qui attaquer
+        personnage2 = Equipe2
         if personnage2.is_alive():
-            action = input(f"\nTour de {personnage2._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) :") 
-            while action not in ['0', '1']:
+            action = input(f"\nEquipe 2 Tour de {personnage2._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) :") 
+            while action not in ['1' ,'2', '3']:
                 print(f"Entrée invalide. Veuillez saisir 0 pour passer ou 1 pour attaquer.")
-                action = input(f"\nTour de {personnage2._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) : ")
+                action = input(f"\nEquipe 2 Tour de {personnage2._nom}. Choisissez une action (1 pour attaquer, 0 pour passer) : ")
 
             if action == '1':
                 target = equipe1[0]
+                personnage2.attack(target)
+                target.show_healthbar()
+            elif action == '2':
+                target = equipe1[1]
+                personnage2.attack(target)
+                target.show_healthbar()
+            elif action == '3':
+                target = equipe1[2]
                 personnage2.attack(target)
                 target.show_healthbar()
             elif action == '0':
@@ -119,7 +163,8 @@ if __name__ == "__main__":
             print(f"\n{equipe2[0]._nom} est éliminé de l'équipe 2.")
             equipe2.pop(0)  # Retirer le personnage mort
             print(f"{equipe2[0]._nom} fait son entrée dans la faille")
-
+            
+    #détermine qui a gagner 
     if equipe1 and equipe2:
         if equipe1[0].is_alive():
             print(f"\n🏆 L'équipe 1 remporte la victoire!")
