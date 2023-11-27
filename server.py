@@ -8,11 +8,13 @@ class Server:
         self._port = port
         self._addr = (self._host, self._port)
         self._conn = None
+        self._game = None
 
-    def start_server(self):
+    def start_server(self, game):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(self._addr)  
         s.listen(1)
+        self._game = game
         try:
             self._conn, self._addr = s.accept()
         except:
@@ -26,12 +28,10 @@ class Server:
         while True:
             try:
                 if data.__contains__("stop"):
-
                     self._conn.close()
                     break
                 else:
-                    data = self.send_question(input("Que veux tu dire : "))
-                    print(f"Voila le message : {data}")
+                    self._game.start()
 
             except socket.error:
                 print("Error Occured.")
