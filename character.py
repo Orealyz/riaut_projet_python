@@ -9,42 +9,54 @@ class Personnage:
         self._nom_competence = nom_competence
         self._nom_defense = nom_defense 
         self._passif_attaque_active = False
+        self._degats_subis = 0
         
     def show_healthbar(self):
-        missing_hp = self._pv_max - self._pv_courant
-        healthbar = f"[{'❤️' * self._pv_courant}{'🖤' * missing_hp}] {self._pv_courant}/{self._pv_max}hp"
+        print(self._degats_subis)
+        missing_hp = self._pv_max - self._pv_courant # 20
+        if self._pv_max - self._degats_subis == self._pv_max - missing_hp:
+                healthbar = f"[{'❤️' * self._pv_courant}{'💛' * abs(self._degats_subis)}] {self._pv_courant}/{self._pv_max}hp"
+        else:
+            if self._pv_courant == 0:
+                healthbar = f"[{'💛' * self._degats_subis }{'🖤' * (self._pv_max - self._degats_subis)}] {self._pv_courant}/{self._pv_max}hp"
+            else:
+                healthbar = f"[{'❤️' * self._pv_courant}{'💛' * self._degats_subis }{'🖤' * (missing_hp - self._degats_subis)}] {self._pv_courant}/{self._pv_max}hp"
         return(healthbar)
 
-    def compute_damages(self, target):
+    def compute_damages(self):
         return self._attaque
 
-    def attack(self, target: 'Personnage') -> str:
+    def attack(self, target: 'Personnage') -> str and int:
         if not self.is_alive():
             return
-        damages = self.compute_damages(target)
-        
+        damages = self.compute_damages()
+        passif_str = ""
         # Activation du passif d'attaque une seule fois si les PV sont inférieurs à 50
         if self._pv_courant < 20 and not self._passif_attaque_active:
-            print(f"\n⚔️ {self._nom} active son passif et inflige {damages + 8} dégâts supplémentaires !")
-            target.defense(damages + 8, self)
+            passif_str = f"\n⚔️ {self._nom} active son passif et inflige {damages + 8} dégâts !"
+            damages = damages + 8
             self._passif_attaque_active = True  # Marquer le passif comme activé
-        else:
-            def_str = target.defense(damages, self)
+        def_str, self._degats_subis = target.defense(damages, self)
+        if passif_str == "":
             return(f"⚔️ {self._nom} attaque {target._nom} avec {self._nom_competence} (Dégâts: {self._attaque})\n{def_str}")
-
+        else:
+            return(f"{passif_str}\n⚔️ {self._nom} attaque {target._nom} avec {self._nom_competence} (Dégâts: {self._attaque})\n{def_str}")
         
     def defense(self, damages, attaquer: 'Personnage') -> str:
         wounds = self.compute_defense(damages, attaquer)    
         self.decrease_health(wounds)
-        return(f"🛡️ Grâce à {self._nom_defense}, {self._nom} prend {wounds} dégâts de {attaquer._nom} (Défense: {self._defense})")
+        return(f"🛡️ Grâce à {self._nom_defense}, {self._nom} prend {wounds} dégâts de {attaquer._nom} (Défense: {self._defense})"), wounds
 
-    def compute_defense(self, damages, attaquer,):
+    def compute_defense(self, damages, attaquer):
         return damages - self._defense
 
     def decrease_health(self, amount):
         self._pv_courant -= amount
+        self._degats_subis = amount
         if self._pv_courant < 0:
+            self._degats_subis = amount - abs(self._pv_courant)
             self._pv_courant = 0
+            
 
     def is_alive(self):
         return self._pv_courant > 0
@@ -53,20 +65,8 @@ class Personnage:
     def __str__(self):
         return f"""👹 {self._nom} rentre dans la faille de l'invocateur 👺:
     💣 attack: {self._attaque} 
-     defense: {self._defense}"""
+    ⛪ defense: {self._defense}"""
 
-if __name__ == "__main__":
 
-    equipe1 = [
-        Personnage("Sylvan", 30, 8, 4, 9, "Foudre", "Ombre"),
-        Personnage("Ignis", 32, 10, 2, 7, "Brûlure", "Flamme"),
-        Personnage("Zephyr", 30, 8, 5, 8, "Tourbillon", "Souffle")
-    ]
-
-    equipe2 = [
-        Personnage("Thorn", 45, 9, 3, 6, "Épine", "Carapace"),
-        Personnage("Aqua", 35, 7, 6, 5, "Vague", "Cascade"),
-        Personnage("Zephyr", 30, 8, 5, 8, "Tourbillon", "Souffle")
-    ]
 
  
